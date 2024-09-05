@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stopwatch</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div id="display">00:00:00</div>
+        <div class="controls">
+            <button class="start">Start</button>
+            <button class="lap">Lap</button>
+            <button class="pause">Pause</button>
+            <button class="rst">Restart</button>
+        </div>
+        <div class="lap_display">
+            <h3>Laps</h3>
+            <ul id="laps"></ul>
+        </div>
+    </div>
+    <script >
+        let startTime, updatedTime, difference, interval;
+let isRunning = false;
+let lapCounter = 0;
+
+const display = document.getElementById('display');
+const startButton = document.querySelector('.start');
+const lapButton = document.querySelector('.lap');
+const pauseButton = document.querySelector('.pause');
+const restartButton = document.querySelector('.rst');
+const laps = document.getElementById('laps');
+
+function startTimer() {
+    if (!isRunning) {
+        startTime = new Date().getTime();
+        interval = setInterval(updateDisplay, 10);
+        isRunning = true;
+    }
+}
+
+function updateDisplay() {
+    updatedTime = new Date().getTime();
+    difference = updatedTime - startTime;
+    const hours = Math.floor((difference / (1000 * 60 * 60)) % 24);
+    const minutes = Math.floor((difference / (1000 * 60)) % 60);
+    const seconds = Math.floor((difference / 1000) % 60);
+    const milliseconds = Math.floor((difference % 1000) / 10);
+
+    display.innerHTML = `${pad(hours)}:${pad(minutes)}:${pad(seconds)}:${pad(milliseconds)}`;
+}
+
+function pad(num) {
+    return num < 10 ? '0' + num : num;
+}
+
+function pauseTimer() {
+    if (isRunning) {
+        clearInterval(interval);
+        isRunning = false;
+    }
+}
+
+function restartTimer() {
+    clearInterval(interval);
+    display.innerHTML = '00:00:00';
+    laps.innerHTML = ''; 
+    lapCounter = 0;
+    isRunning = false;
+}
+
+function recordLap() {
+    if (isRunning) {
+        lapCounter++;
+        const lapTime = display.innerHTML;
+        const lapItem = document.createElement('li');
+        lapItem.innerText = `Lap ${lapCounter}: ${lapTime}`;
+        laps.appendChild(lapItem);
+    }
+}
+
+
+startButton.addEventListener('click', startTimer);
+pauseButton.addEventListener('click', pauseTimer);
+restartButton.addEventListener('click', restartTimer);
+lapButton.addEventListener('click', recordLap);
+
+    </script>
+</body>
+</html>
